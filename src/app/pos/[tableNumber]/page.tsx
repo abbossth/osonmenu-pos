@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { formatMoney } from "@/lib/format";
+import { buildReceiptHtml, openReceiptWindow } from "@/lib/receipt";
 
 type OrderStatus = "pending" | "confirmed" | "preparing" | "ready" | "completed" | "cancelled";
 
@@ -50,6 +51,18 @@ export default function TableOrdersPage({
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
   const [error, setError] = useState<string | null>(null);
+  const [establishmentName, setEstablishmentName] = useState<string>("");
+
+  useEffect(() => {
+    if (!slug) return;
+    fetch("/api/establishments")
+      .then((res) => res.json())
+      .then((data) => {
+        const est = data.establishments?.find((e: { slug: string; name: string }) => e.slug === slug);
+        if (est) setEstablishmentName(est.name);
+      })
+      .catch(() => {});
+  }, [slug]);
 
   useEffect(() => {
     if (!slug) return;
@@ -98,11 +111,11 @@ export default function TableOrdersPage({
   }
 
   async function sendToPrint(order: OrderRow) {
-    try {
-      await fetch(`/api/orders/${order._id}/print`, { method: "POST" });
-    } catch (err) {
-      console.error(err);
-    }
+    // Notify the Electron terminal (if one is running/connected) to print via its
+    // thermal printer, and — since this browser tab has no printer connection of
+    // its own — also open a print-ready receipt right here as a fallback.
+    fetch(`/api/orders/${order._id}/print`, { method: "POST" }).catch((err) => console.error(err));
+    openReceiptWindow(buildReceiptHtml(order, establishmentName, tableNumber));
   }
 
   return (
