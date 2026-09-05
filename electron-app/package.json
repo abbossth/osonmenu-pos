@@ -24,6 +24,23 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
+  "build": {
+    "appId": "uz.osonmenu.pos",
+    "productName": "OsonMenu POS",
+    "files": [
+      "out/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  },
   "devDependencies": {
     "@electron/rebuild": "^4.2.0",
     "@eslint/js": "^10.0.1",
