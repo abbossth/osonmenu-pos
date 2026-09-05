@@ -40,13 +40,13 @@ const NEXT_STATUS: Partial<Record<OrderStatus, { next: OrderStatus; label: strin
 
 export default function TableOrdersPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tableNumber: string }>;
+  searchParams: Promise<{ slug?: string }>;
 }) {
   const { tableNumber } = use(params);
-  const [slug] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("slug")
-  );
+  const { slug } = use(searchParams);
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]["key"]>("all");
   const [error, setError] = useState<string | null>(null);

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { formatMoney } from "@/lib/format";
 
@@ -32,10 +32,12 @@ interface Stats {
   activeTables: number;
 }
 
-export default function AdminPage() {
-  const [slug] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("slug")
-  );
+export default function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ slug?: string }>;
+}) {
+  const { slug } = use(searchParams);
   const [refreshKey, setRefreshKey] = useState(0);
   const [establishment, setEstablishment] = useState<Establishment | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);

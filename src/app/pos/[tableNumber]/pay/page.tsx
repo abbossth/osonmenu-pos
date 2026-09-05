@@ -30,15 +30,15 @@ const METHODS: { key: PaymentMethod; label: string }[] = [
 
 export default function TablePayPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ tableNumber: string }>;
+  searchParams: Promise<{ slug?: string }>;
 }) {
   const { tableNumber } = use(params);
+  const { slug } = use(searchParams);
   const router = useRouter();
 
-  const [slug] = useState<string | null>(() =>
-    typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("slug")
-  );
   const [seats, setSeats] = useState<SeatGroup[] | null>(null);
   const [grandTotal, setGrandTotal] = useState(0);
   const [selectedSeat, setSelectedSeat] = useState<"table" | string>("table");
